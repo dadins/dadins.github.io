@@ -1,1 +1,9 @@
+# Site settings
+title: 大地的笔记
+email: yangxu0823@gmail.com
+description: "日常笔记"
+url: "https://dadins.github.io"
 theme: jekyll-theme-cayman
+
+# Sidebar settings
+sidebar: true
