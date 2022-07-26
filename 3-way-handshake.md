@@ -237,11 +237,11 @@ NO， RFC只是定义了规范，但很多规范都是用了SHOULD，而不是�
 **两次握手**
 ```mermaid
 sequenceDiagram
-participant 菲儿
+participant 测试
 participant cs
 autonumber
-菲儿->> cs: 你这里有个bug 
-cs --x 菲儿:  在哪里？
+测试->> cs: 你这里有个bug 
+cs --x 测试:  在哪里？
 ```
 cs：老子想看看，你到底让不让。
 显然两次是不能够保证连接一定建立起来了。
@@ -250,13 +250,13 @@ cs：老子想看看，你到底让不让。
 **四次握手**
 ```mermaid
 sequenceDiagram
-participant 菲儿
-participant cs
+participant 测试
+participant 研发
 autonumber
-菲儿 ->> cs: 你这里有个bug 
-cs -->> 菲儿:  在哪里？我看一下
-菲儿 ->> cs : 在这里，你快来看呀
-菲儿 ->> cs: 在这里，你快来看呀
+测试 ->> 研发: 你这里有个bug 
+研发-->> 测试: 在哪里？我看一下
+测试 ->> 研发: 在这里，你快来看呀
+测试 ->> 研发: 在这里，你快来看呀
 ```
 cs：老子知道了，别催了
 可以看到，四次有点儿多余。
@@ -266,26 +266,26 @@ cs：老子知道了，别催了
 **三次握手**
 ```mermaid
 sequenceDiagram
-participant 菲儿
-participant cs
+participant 测试
+participant 研发
 autonumber
-菲儿->> cs: 你这里有个bug 
-cs -->> 菲儿:  在哪里？
-菲儿 ->> cs : 在这里
-菲儿 -> cs: 两个人手牵手开心的去修复bug了
+测试 ->>  研发: 你这里有个bug 
+研发 -->> 测试: 在哪里？
+测试 ->>  研发: 在这里
+测试 ->   研发: 两个人手牵手开心的去修复bug了
 ```
 
 ### 4.2 TCP握手一定是三次么？
 * 联想以下场景：
 ```mermaid
 sequenceDiagram
-participant 菲儿
-participant cs
+participant 测试
+participant 研发
 
-菲儿 ->> cs: 你这俩有个bug 
-cs ->> 菲儿: 在哪里，我看看
-菲儿 -x cs: 在这里
-菲儿 ->> cs: 走到cs面前直接开始深度交流
+测试 ->> 研发: 你这俩有个bug 
+研发 ->> 测试: 在哪里，我看看
+测试 -x  研发: 在这里
+测试 ->> 研发: 走到研发面前直接开始交流细节
 ```
 正常情况下，第3个包是没有必要发的，因为第4个包可以把必要的信息捎带过去。
 
