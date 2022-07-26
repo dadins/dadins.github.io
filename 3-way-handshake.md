@@ -8,7 +8,7 @@
 * 6. DDoS防护（未完成）
 ---
 ## 0. TCP Header
-![avatar](img/tcp-header.png)
+![avatar](img/TCP-header.png)
 
 如上图所示，为标准的TCP头部字段.
 
