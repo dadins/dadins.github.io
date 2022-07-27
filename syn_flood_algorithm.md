@@ -35,7 +35,7 @@ client ->> server: ACK (seq = x+1, ack = y+1)
 
 **这个算法很骚，不知道作者是谁，也没留下相关技术原理的资料，个人本着刨根问底的精神去读了一下RFC 793，还真找到了相关的来源：**
 
-## *来源1*
+### *来源1*
 ```
 RFC793 Page 33 Figure 9
 
@@ -82,7 +82,7 @@ RFC793 Page 33 Figure 9
 
 
 
-## *来源2*
+### *来源2*
 
 ```
 RFC793 Page 34 Figure 10
@@ -117,7 +117,7 @@ RFC793 Page 34 Figure 10
 
 ```
 
-## *来源3*
+### *来源3*
 ```
 RFC 793 Page 66
 
@@ -148,6 +148,9 @@ RFC793 Page 70
         TCB, and return.
 
 ```
+
+来源1和来源2是解释为什么客户端收到错误的SYN+ACK包后会响应RST包。（就是TCP协议规定要这么干）
+来源3是解释为什么客户端会重传之前的SYN包（因为只要求discard the segment，并没有要求delte the TCB）
 
 **开启saferst算法之后，client会重传之前的SYN包，为什么？**
 之所以client会重传SYN，是因为上面的RFC并没有要求删除对应的TCB、重传队列，所以重传定时器会在超时（3s或1s）之后执行重传操作。
