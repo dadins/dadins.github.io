@@ -74,11 +74,12 @@ RFC793 Page 33 Figure 9
   before the RST, a more complex exchange might have occurred with RST's
   sent in both directions.
 
+  1. 服务器(TCP B)收到包1，假如回复一个错误的SYN+ACK包（包4），客户端会回复一个RST包（包5），服务器收到这个包就会加白名单。
+
+  2. 客户端如果没收到正确的响应(SYN+ACK)，就会重传SYN包(类似包6)，之后就进入正常的三次握手流程了（6 7 8）
+
 ```
 
-服务器(TCP B)收到包1，假如回复一个错误的SYN+ACK包（包4），客户端会回复一个RST包（包5），服务器收到这个包就会加信任。
-
-客户端如果没收到正确的响应(SYN+ACK)，就会重传SYN包(类似包6)，之后就进入正常的三次握手流程了（6 7 8）
 
 
 
@@ -146,16 +147,19 @@ RFC793 Page 70
         flushed.  Users should also receive an unsolicited general
         "connection reset" signal.  Enter the CLOSED state, delete the
         TCB, and return.
-
 ```
 
 1. 来源1和来源2是解释为什么客户端收到错误的SYN+ACK包后会响应RST包。（就是TCP协议规定要这么干）
 2. 来源3是解释为什么客户端会重传之前的SYN包（因为只要求discard the segment，并没有要求delte the TCB）
 
 **开启saferst算法之后，client会重传之前的SYN包，为什么？**
-之所以client会重传SYN，是因为上面的RFC并没有要求删除对应的TCB、重传队列，所以重传定时器会在超时（3s或1s）之后执行重传操作。
-首次重传间隔：3s（旧的RFC标准） 1s（新的RFC标准）
+```
+1. 之所以client会重传SYN，是因为上面的RFC并没有要求删除对应的TCB，重传定时器也还在，所以重传定时器会在超时（3s或1s）之后执行重传操作。
+2. 首次重传间隔：3s（旧的RFC标准） 1s（新的RFC标准）
+```
 
 **开启该算法的影响**
+```
 1. 某些防火墙比较傻瓜，会丢弃不合法的syn+ack包，导致该算法不能生效。
 2. 连接会卡顿一下（1s或3s的超时重传）
+```
