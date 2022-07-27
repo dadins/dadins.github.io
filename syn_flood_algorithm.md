@@ -1,19 +1,39 @@
 # SYN-Flood防护算法
 
 ---
-** 业界常用的SYN-Flood防护算法有两种:**
+**业界常用的SYN-Flood防护算法有两种:**
 1. saferst算法
 2. syncookie算法
 
 ## syncookie算法：
 syncookie时RFC专门用来解决SYN-Flood攻击的，具体请查阅RFC。
-
+```mermaid
+sequenceDiagram
+participant client
+participant server
+client ->>server: SYN (seq = x, ack = 0)
+server -->> client: SYN + ACK (seq = hash(ip, port, key), ack = x+1)
+client ->> server: ACK (seq = x+1, ack = y)
+server -->> server: 如果 y == hash(ip, port, key) + 1, 则认为是一个真实的连接, 否则认为是一个攻击
+```
 
 ## saferst算法：
 
-** TODO：增加该算法的防护流程图
+```mermaid
+sequenceDiagram
+participant client
+participant server
+autonumber
+client ->>server: SYN (seq = x, ack = 0)
+server -->> client: SYN + ACK (seq = y, ack = hash(ip, port, key))
+client ->> server: RST (seq = x, ack = hash(ip, port, key))
+server -->> server: 如果RST包是我们预期的数据包，则认为是一个真实的连接<br>否则认为该连接不合法
+client ->>server: SYN (seq = x, ack = 0)<br>重传包1
+server -->> client: SYN + ACK (seq = y, ack = x+1)
+client ->> server: ACK (seq = x+1, ack = y+1)
+```
 
-这个算法怎么发现的不太清楚，但是至今一直没有明确的理论依据，个人通过阅读RFC，找到了对应的理论依据：
+**这个算法很骚，不知道作者是谁，也没留下相关技术原理的资料，个人本着刨根问底的精神去读了一下RFC 793，还真找到了相关的来源：**
 
 ## *来源1*
 ```
@@ -56,7 +76,7 @@ RFC793 Page 33 Figure 9
 
 ```
 
-ADS(TCP B)收到包1，假如回复一个错误的SYN+ACK包（包4），客户端会回复一个RST包（包5），ADS收到这个包就会加信任。
+服务器(TCP B)收到包1，假如回复一个错误的SYN+ACK包（包4），客户端会回复一个RST包（包5），服务器收到这个包就会加信任。
 
 客户端如果没收到正确的响应(SYN+ACK)，就会重传SYN包(类似包6)，之后就进入正常的三次握手流程了（6 7 8）
 
@@ -113,16 +133,7 @@ RFC 793 Page 66
             <SEQ=SEG.ACK><CTL=RST>
 
           and discard the segment.  Return.
-```
 
-saferst流程之后，client会重传之前的SYN包，为什么（最早的时候，使用算法1会卡3s）？
-
-```
-之所以client会重传SYN（而不是像SYN算法2-syncookie那样收到rst之后就不会重传了- 参考下面）
-是因为上面的RFC并没有要求删除对应的TCB、重传队列，所以重传队列里会有数据，1s之后会执行重传操作。
-```
-
-```
 RFC793 Page 70
 
       ESTABLISHED
@@ -135,7 +146,13 @@ RFC793 Page 70
         flushed.  Users should also receive an unsolicited general
         "connection reset" signal.  Enter the CLOSED state, delete the
         TCB, and return.
+
 ```
-syncookie算法完成之后，client会进入established状态，在该状态下收到RST包之后会删除TCB(重传队列也要清空)。
 
+**开启saferst算法之后，client会重传之前的SYN包，为什么？**
+之所以client会重传SYN，是因为上面的RFC并没有要求删除对应的TCB、重传队列，所以重传定时器会在超时（3s或1s）之后执行重传操作。
+首次重传间隔：3s（旧的RFC标准） 1s（新的RFC标准）
 
+**开启该算法的影响**
+1. 某些防火墙比较傻瓜，会丢弃不合法的syn+ack包，导致该算法不能生效。
+2. 连接会卡顿一下（1s或3s的超时重传）
