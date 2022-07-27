@@ -1,8 +1,15 @@
 # 技术笔记
 
-## nginx HTTP2漏洞视频（TODO:视频不能直接加载）
-```HTML
-<video width="800" height="600" controls>
-    <source src="video/demo.mp4" type="video/mp4">
-</video>
-```
+## 网络协议（TCP/IP、HTTP1/2/3、QUIC等）
+
+## 安全产品相关（ddos、网关、L4代理、L7代理）
+
+## 开发技术（dpdk、ebpf）
+
+## 语言（c、golang）
+
+## 架构
+
+## 开源组件（nginx、etcd、redis）
+
+## 管理
