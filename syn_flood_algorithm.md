@@ -149,8 +149,8 @@ RFC793 Page 70
 
 ```
 
-来源1和来源2是解释为什么客户端收到错误的SYN+ACK包后会响应RST包。（就是TCP协议规定要这么干）
-来源3是解释为什么客户端会重传之前的SYN包（因为只要求discard the segment，并没有要求delte the TCB）
+1. 来源1和来源2是解释为什么客户端收到错误的SYN+ACK包后会响应RST包。（就是TCP协议规定要这么干）
+2. 来源3是解释为什么客户端会重传之前的SYN包（因为只要求discard the segment，并没有要求delte the TCB）
 
 **开启saferst算法之后，client会重传之前的SYN包，为什么？**
 之所以client会重传SYN，是因为上面的RFC并没有要求删除对应的TCB、重传队列，所以重传定时器会在超时（3s或1s）之后执行重传操作。
